@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Datafast GO - Budokan</title>
+<style>
+body{font-family:Arial, sans-serif; background:#0a0f24; color:#fff; text-align:center; padding:20px;}
+h1{color:#ffcc00;}
+input{padding:8px; margin:5px; border-radius:6px; border:none; width:80%;}
+button{padding:10px 16px; margin-top:10px; border:none; border-radius:8px; background:#ffcc00; font-weight:bold; cursor:pointer;}
+.album{display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;}
+.slot{width:100px; height:100px; border:2px dashed #555; display:flex; align-items:center; justify-content:center; border-radius:12px; background:#111;}
+.slot.found{border:2px solid #42e695; background:#1e2f1e;}
+#coupon{margin-top:20px; font-size:18px; font-weight:bold; color:#42e695;}
+video{width:100%; max-width:360px; margin-top:15px; border-radius:12px;}
+</style>
+</head>
+<body>
+<h1>Datafast GO 🔎</h1>
+<div id="register">
+  <p>Regístrate para jugar:</p>
+  <input type="text" id="name" placeholder="Nombre y Apellido"><br>
+  <input type="tel" id="phone" placeholder="Número de celular"><br>
+  <button onclick="register()">Iniciar Juego</button>
+</div>
+
+<div id="game" style="display:none;">
+  <p>Encuentra los equipos y servicios Datafast escaneando los QR escondidos.</p>
+  <div class="album">
+    <div id="tenten" class="slot">TenTen</div>
+    <div id="datasmart" class="slot">DataSmart</div>
+    <div id="datalink" class="slot">DataLink</div>
+    <div id="dataweb" class="slot">DataWeb</div>
+    <div id="databalance" class="slot">DataBalance</div>
+  </div>
+  <button onclick="startScan()">📷 Escanear QR</button>
+  <video id="preview"></video>
+  <div id="coupon"></div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+let found = {tenten:false, datasmart:false, datalink:false, dataweb:false, databalance:false};
+const preview = document.getElementById("preview");
+let qrScanner;
+let user = {};
+
+function register(){
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  if(name === "" || phone === ""){
+    alert("Por favor ingresa tu nombre y celular");
+    return;
+  }
+  user = {name, phone};
+  localStorage.setItem("datafast_user", JSON.stringify(user)); // guarda temporalmente
+  document.getElementById("register").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  alert("¡Bienvenido " + name + "! Ahora comienza a buscar los equipos.");
+}
+
+function startScan(){
+  if(qrScanner){ qrScanner.stop(); }
+  qrScanner = new Html5Qrcode("preview");
+  qrScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 200 },
+    qrCodeMessage => {
+      const urlParams = new URLSearchParams(qrCodeMessage.split('?')[1]);
+      const equipo = urlParams.get('equipo') || qrCodeMessage.trim().toLowerCase();
+      handleCode(equipo);
+    },
+    errorMessage => {}
+  );
+}
+
+function handleCode(code){
+  if(found.hasOwnProperty(code)){
+    found[code] = true;
+    document.getElementById(code).classList.add("found");
+    qrScanner.stop();
+    checkWin();
+    alert("✅ Encontraste: " + code.toUpperCase());
+  } else {
+    alert("❌ QR no válido");
+  }
+}
+
+function checkWin(){
+  if(Object.values(found).every(v => v)){
+    let coupon = "DF-" + Math.random().toString(36).substr(2,6).toUpperCase();
+    document.getElementById("coupon").innerHTML = 
+      "🎉 ¡Felicidades " + user.name + "! Completaste el álbum.<br>Tu cupón: <span style='font-size:22px'>" + coupon + "</span>";
+  }
+}
+</script>
+</body>
+</html>
