@@ -2,144 +2,70 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Datafast GO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro Datafast</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #0a0f24;
-      color: #ffffff;
-      text-align: center;
-      padding: 20px;
+      background: linear-gradient(135deg, #cdeb08, #00b7a3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
     }
 
     h1 {
-      color: #ffcc00;
+      color: #17365d;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    input {
-      padding: 8px;
-      margin: 5px;
-      border-radius: 6px;
-      border: none;
-      width: 80%;
-      background: #1e2e4d;
-      color: #ffffff;
+    .qr-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+      text-align: center;
     }
 
-    input::placeholder {
-      color: #cccccc;
+    img.qr {
+      width: 200px;
+      height: 200px;
+      margin: 15px 0;
     }
 
-    button {
-      padding: 10px 16px;
+    p {
+      color: #17365d;
+      font-size: 16px;
+    }
+
+    a {
+      display: inline-block;
       margin-top: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #ffcc00;
-      color: #0a0f24;
-      font-weight: bold;
-      cursor: pointer;
+      padding: 10px 18px;
+      background: #00b7a3;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: background 0.3s ease;
     }
 
-    button:hover {
-      background: #e6b800;
-    }
-
-    .album {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .slot {
-      width: 100px;
-      height: 100px;
-      border: 2px dashed #555555;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      background: #1a223b;
-      color: #ffffff;
-    }
-
-    .slot.found {
-      border: 2px solid #42e695;
-      background: #101a2f;
-    }
-
-    #coupon {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #42e695;
+    a:hover {
+      background: #17365d;
     }
   </style>
 </head>
 <body>
-
-  <!-- Registro -->
-  <div id="register">
-    <h1>Datafast GO 🔍</h1>
-    <p>Regístrate para comenzar la búsqueda de equipos y servicios.</p>
-    <input type="text" id="name" placeholder="Nombre y Apellido"><br>
-    <input type="tel" id="phone" placeholder="Número de celular"><br>
-    <button onclick="startGame()">Comenzar</button>
+  <h1>Regístrate en Datafast</h1>
+  
+  <div class="qr-container">
+    <p>Escanea este código QR para iniciar tu registro:</p>
+    <!-- QR generado con la URL de registro -->
+    <img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://datafastgo.com/registro" alt="QR Registro">
+    <br>
+    <a href="https://datafastgo.com/registro" target="_blank">Abrir enlace</a>
   </div>
-
-  <!-- Juego -->
-  <div id="game" style="display:none;">
-    <h1>Datafast GO 🔍</h1>
-    <p>Encuentra los equipos y servicios Datafast escaneando los QR escondidos.</p>
-
-    <div class="album" id="album">
-      <div class="slot" id="TenTen">TenTen</div>
-      <div class="slot" id="DataSmart">DataSmart</div>
-      <div class="slot" id="DataLink">DataLink</div>
-      <div class="slot" id="DataWeb">DataWeb</div>
-      <div class="slot" id="DataBalance">DataBalance</div>
-    </div>
-
-    <button onclick="simulateScan()">📷 Escanear QR</button>
-    <div id="coupon"></div>
-  </div>
-
-  <script>
-    const products = ["TenTen", "DataSmart", "DataLink", "DataWeb", "DataBalance"];
-    let found = [];
-
-    function startGame() {
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-
-      if (!name || !phone) {
-        alert("Por favor, completa tu nombre y celular.");
-        return;
-      }
-
-      document.getElementById("register").style.display = "none";
-      document.getElementById("game").style.display = "block";
-    }
-
-    function simulateScan() {
-      // Simulación: elige un producto aleatorio aún no encontrado
-      const remaining = products.filter(p => !found.includes(p));
-      if (remaining.length === 0) {
-        alert("¡Ya encontraste todos los productos!");
-        return;
-      }
-      const random = remaining[Math.floor(Math.random() * remaining.length)];
-
-      document.getElementById(random).classList.add("found");
-      found.push(random);
-
-      if (found.length === products.length) {
-        document.getElementById("coupon").innerText =
-          "🎉 ¡Felicidades! Has completado el reto. Reclama tu premio en el stand Datafast.";
-      }
-    }
-  </script>
 </body>
 </html>
